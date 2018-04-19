@@ -1,4 +1,4 @@
-all: stringtest messagepasser
+all: stringtest messagepasser stringtest-ours test 
 
 messagepasser: message-passer.o noisy-transmission.o
 	clang++ -ldl -rdynamic -g -stdlib=libc++ -std=c++11 -Wall -Wextra -pedantic -o messagepasser message-passer.o noisy-transmission.o
@@ -8,9 +8,19 @@ stringtest: stringtest.o testing-logger.o
 
 stringtest-old: stringtest-old.o testing-logger.o
 	clang++ -ldl -rdynamic -g -stdlib=libc++ -std=c++11 -Wall -Wextra -pedantic -o stringtest-old  stringtest-old.o testing-logger.o
+
+stringtest-ours: stringtest-ours.o testing-logger.o \
+    chunkylist.hpp chunkylist-private.hpp
+	clang++ -ldl -rdynamic -stdlib=libc++ \
+	 -g -stdlib=libc++ -std=c++11 -Wall -Wextra -pedantic -o stringtest-ours \
+	 stringtest-ours.o testing-logger.o 
    
-stringtest.o: stringtest.cpp chunkystring.hpp chunkylist.hpp chunkylist-private.hpp
-	clang++ -c -g -stdlib=libc++ -std=c++11 -Wall -Wextra -pedantic  stringtest.cpp
+stringtest.o: stringtest.cpp chunkylist.hpp chunkystring.hpp chunkylist-private.hpp
+	clang++ -c -g -stdlib=libc++ -std=c++11 -Wall -Wextra -pedantic  stringtest.cpp testing-logger.cpp 
+
+stringtest-ours.o: stringtest-ours.cpp chunkystring.hpp
+	clang++ -c -g -stdlib=libc++ -std=c++11 -Wall -Wextra -pedantic \
+		stringtest-ours.cpp testing-logger.cpp
 
 stringtest-old.o: stringtest-old.cpp chunkystring.hpp chunkystring.hpp chunkylist.hpp chunkylist-private.hpp
 	clang++ -c -g -stdlib=libc++ -std=c++11 -Wall -Wextra -pedantic  stringtest-old.cpp
