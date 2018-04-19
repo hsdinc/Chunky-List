@@ -200,7 +200,6 @@ typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::insert(ELEMENT c, it
     //if the chunk is not full, just call insertToChunk
     else if(i.it_->length_ != ChunkyList<ELEMENT>::Chunk::CHUNKSIZE){
         insertToChunk(i,c);
-        print(cout);
         return i;
     }
     
@@ -212,14 +211,15 @@ typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::insert(ELEMENT c, it
 template <typename ELEMENT> 
 typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::erase(iterator i)
 {
+
     //if the chunkyList has less than 3 elements or chunk has enough elements just delete 
     if(size_ <=3 || i.it_->length_ > 3){
-        return deleteFromChunk(i);
-
+        iterator return_ = deleteFromChunk(i);       
+        return return_;
     }
     //if we need utilization 
     else if (i.it_->length_ =3){
-        iterator it = deleteFromChunk(it);
+        iterator it = deleteFromChunk(i);
         return copyNewUtilization(it);
     }
 }
@@ -258,24 +258,39 @@ ChunkyList<ELEMENT>::copyNewUtilization(typename ChunkyList<ELEMENT>::iterator& 
 template <typename ELEMENT>
 typename ChunkyList<ELEMENT>::iterator 
 ChunkyList<ELEMENT>::utilLast(typename ChunkyList<ELEMENT>::iterator& i){
-    chunk_iter_t previousChunk = --(i.it_);
-    if (previousChunk->length_ > 9){
-        ELEMENT elementToCopy = previousChunk->elements_[previousChunk->length_-1];
-        --previousChunk->length_;
+    //create an iterator 
+    iterator previousChunk = i;
+    //set it to point to the previous Chunk
+    --previousChunk.it_;
+    //the length_ of the previous chunk is greater than 9
+    if (previousChunk.it_->length_ > 9){
+        //copy all the elements from the chunk that erased an element
+        // over to the previous chunk
+        ELEMENT elementToCopy = previousChunk.it_->elements_[previousChunk.it_->length_-1];
+        //update the length of the previous chunk
+        --previousChunk.it_->length_;
         ++(*i.it_).length_;
-        for (size_t  mover = (*i.it_)->length_-1; mover >= 0; --mover){
-            (*i.it_).elements_[mover] = previousChunk->elements_[mover+1];
+        //mover starts at the end of the length_ and will go up to 0
+        for (size_t  mover = (*i.it_).length_-1; mover >= 0; --mover){
+            //each time it will move an element to fill in the new empty spaces
+            (*i.it_).elements_[mover] = previousChunk.it_->elements_[mover+1];
         }
-        ++(*i.it_)->length_;
+        //update length
+        ++(*i.it_).length_;
+        //moves the element copy to correct chunk
         (*i.it_).elements_[0] = elementToCopy;
         return i;
     } 
-    else{
-        for (size_t mover = 0; mover < (*i.it_)->length_; ++mover){
-            previousChunk->elements_[previousChunk->length_] = (*i.it).elements_[mover];
-            ++previousChunk->length_;       
+    else{ //when the adjacent chunk is smaller than 9
+        //mover starts at 0 and goes up to the length_
+        for (size_t mover = 0; mover < (*i.it_).length_; ++mover){
+            //each time it will move an element to fill in the new empty spaces
+            previousChunk.it_->elements_[previousChunk.it_->length_] = (*i.it_).elements_[mover];
+            //update length_
+            ++previousChunk.it_->length_;       
         }
-        erase(i.it_);
+        //delete the now empty chunk
+        chunks_.erase(i.it_);
         return i;
     } 
  }
@@ -284,35 +299,40 @@ ChunkyList<ELEMENT>::utilLast(typename ChunkyList<ELEMENT>::iterator& i){
 template <typename ELEMENT>
 typename ChunkyList<ELEMENT>::iterator 
 ChunkyList<ELEMENT>::util(typename ChunkyList<ELEMENT>::iterator& i){
-    const_iterator nextChunk = ++(i.it_);
-    //if length_ >9
-    if (nextChunk->length_ > 9){
-        ELEMENT elementToCopy = nextChunk->elements_[0];
+    //create an iterator 
+    iterator nextChunk = i;
+    //that points to the adjacent chunk
+    ++nextChunk.it_;
+    //if length_ of adjacent chunk > 9
+    if (nextChunk.it_->length_ > 9){
+        // copy the first element of the chunk into elementToCopy
+        ELEMENT elementToCopy = nextChunk.it_->elements_[0];
+        //puts the elements into the next chunk
         (*i.it_).elements_[(*i.it_).length_] = elementToCopy;
         ++(*i.it_).length_;
-        for (size_t mover = 0; mover < nextChunk->length_; ++mover){
-            (*i.it_).elements_[mover] = nextChunk->elements_[mover+1];       
+        //create mover that starts at 0 and goes up to the length_
+        for (size_t mover = 0; mover < nextChunk.it_->length_; ++mover){
+            //each time move an element to its new correct location
+            (*i.it_).elements_[mover] = nextChunk.it_->elements_[mover+1];       
         }
-        --nextChunk->length_;
+        --nextChunk.it_->length_;
         return i;
     }
     else{
+        // toMove stores the arrayIndex_ change
         size_t toMove = (*i.it_).length_;
-        for (size_t  mover = nextChunk->length_-1; mover >= 0; --mover){
-            nextChunk->elements_[mover+toMove] = nextChunk->elements_[mover];
+        //create mover that starts at the length_ - 1 and goes up to 0
+        for (size_t  mover = nextChunk.it_->length_-1; mover >= 0; --mover){
+            //each time move an element to its new correct location
+            nextChunk.it_->elements_[mover+toMove] = nextChunk.it_->elements_[mover];
         } 
         //increase the length of the adjacent chunk and then delete the previous chunk
-        nextChunk->length_ = nextChunk->length_ + toMove;
-        erase(i.it_);
+        nextChunk.it_->length_ = nextChunk.it_->length_ + toMove;
+        //delete the now empty chunk
+        chunks_.erase(i.it_);
         return i;
     }
  }
-
-
-
-//////////
-////////
-
 
 template <typename ELEMENT> 
 ChunkyList<ELEMENT>& ChunkyList<ELEMENT>::operator+=(const ChunkyList<ELEMENT>& rhs)
@@ -343,26 +363,9 @@ double ChunkyList<ELEMENT>::utilization() const{
     return currentElement/maxElement;
 }
 
-
-
-/*
-
-
-template <typename ELEMENT> 
-template<bool is_const>
-typename ChunkyList<ELEMENT>::iterator erase(iterator i)
-{
-    throw std::logic_error("Not yet implemented");
-}
-*/
-
-
-
-
 /////////////////////////////
 ///////Iterator Class////////
 /////////////////////////////
-
 
 template <typename ELEMENT> 
 template<bool is_const> 

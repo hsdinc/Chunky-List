@@ -277,26 +277,6 @@ bool inequalityTest()
     return log.summarize();
 }
 
-/*
-bool printTest()
-{
-    // Set up the TestingLogger object
-    TestingLogger log("print test");
-
-    // Test Setup
-    TestingString testString;
-    testString.push_back('a');
-    std::ostringstream foo;
-    foo << testString;
-
-
-    affirm("a"==foo.str());
-    // Print a summary of the all the affirmations and return true
-    // if they were all successful.
-    return log.summarize();    
-}
-*/
-
 bool smallerTest()
 {
     // Set up the TestingLogger object
@@ -334,9 +314,6 @@ bool dereferenceTest()
     int a = *itrBegin;
     affirm(*itrBegin=='a');
 
-    
-    
-    
 
     // Print a summary of the all the affirmations and return true
     // if they were all successful.
@@ -561,56 +538,35 @@ bool eraseTest()
     TestingString myChunkyString;
     myChunkyString.push_back('a');
     myChunkyString.push_back('b');
+    myChunkyString.push_back('c');
+    myChunkyString.push_back('d');
+    myChunkyString.push_back('e');
+    myChunkyString.push_back('f');    
+
     TestingString::iterator itrBegin = myChunkyString.begin();
     ++itrBegin;
     myChunkyString.erase(itrBegin);
 
     TestingString myChunkyString2;
     myChunkyString2.push_back('a');
+    myChunkyString2.push_back('c');
+    myChunkyString2.push_back('d');
+    myChunkyString2.push_back('e');
+    myChunkyString2.push_back('f');
+
 
     affirm(myChunkyString==myChunkyString2);
+
 
     // Print a summary of the all the affirmations and return true
     // if they were all successful.
     return log.summarize();    
 }
-/*
+
 /////////////////////
 //UTILIZATION TESTS//
 /////////////////////
 
-bool utilizationEasyTest(){
-
-
- // Set up the TestingLogger object
-TestingLogger log("utilization easy test");
-
-// Test Setup
-TestingString myChunkyString;
-myChunkyString.push_back('a');
-myChunkyString.push_back('b');
-
-    for(int i =0; i<100; ++i){
-        TestingString::iterator itrBegin = myChunkyString.begin();
-        ++itrBegin;
-        myChunkyString.insert(itrBegin, 'z');
-        checkUtilization(myChunkyString, 2);
-
-    }
-
-    for(int i =0; i<100; ++i){
-        TestingString::iterator itrEnd = myChunkyString.end();
-        --itrEnd;
-        myChunkyString.erase(itrEnd);
-        checkUtilization(myChunkyString, 4);
-
-    }
-
-// Print a summary of the all the affirmations and return true
-// if they were all successful.
-return log.summarize();  
-}
-*/
 bool utilizationHardInsertTest(){
 
 
@@ -642,7 +598,7 @@ myChunkyString.push_back('b');
 return log.summarize();   
 }
 
-/*
+
 bool utilizationHardEraseTest(){
 
 
@@ -651,14 +607,18 @@ TestingLogger log("utilization hard erase test");
 
 // Test Setup
 TestingString myChunkyString;
-for(int i =0; i<1000; ++i){
+for(int i =0; i<10; ++i){
     myChunkyString.push_back('a');
+    myChunkyString.push_back('b'); 
+    myChunkyString.push_back('c');
+    myChunkyString.push_back('d');     
 }
 checkUtilization(myChunkyString, 2);
 
-for(int i =0; i<50; ++i){
+
+for(int i =0; i<10; ++i){
     TestingString::iterator itrBegin = myChunkyString.begin();
-    for(int j = 0; j < 40; ++j){
+    for(int j = 0; j < 5; ++j){
         ++itrBegin;
     }
     myChunkyString.erase(itrBegin);
@@ -669,13 +629,6 @@ for(int i =0; i<50; ++i){
 // if they were all successful.
 return log.summarize();  
 }
-*/
-
-
-
-
-
-
 
 
 //--------------------------------------------------
@@ -722,8 +675,7 @@ int main(int argc, char** argv)
     affirm(sameConcatenateTest());    
     affirm(emptyConcatenateTest());
     affirm(emptyEqualityTest());    
-    affirm(inequalityTest());    
-    //affirm(printTest());  
+    affirm(inequalityTest());      
     affirm(smallerTest()); 
     affirm(incrementTest());
     affirm(decrementTest());
@@ -737,8 +689,7 @@ int main(int argc, char** argv)
     affirm(notSameTest());
     affirm(utilizationHardInsertTest());
     affirm(eraseTest()); 
-   // affirm(utilizationHardEraseTest()); 
-   // affirm(utilizationEasyTest());
+    affirm(utilizationHardEraseTest()); 
 
     if (alltests.summarize(true)) {
         return 0;       // Error code of 0 == Success!

@@ -99,7 +99,7 @@ int main(int argc, const char* argv[])
 
         // Build a ChunkyString from the file contents
         string messageLine; 
-        ChunkyString::ChunkyString message;
+        ChunkyString message;
 
         while (getline(fileReader, messageLine)) {
             for (const char c : messageLine) {
@@ -113,7 +113,7 @@ int main(int argc, const char* argv[])
         transmissionLine.transmit(message);
 
         // Print the garbled message
-        cout << message << endl;
+        //cout << message << endl;
 
         return 0;
     }
