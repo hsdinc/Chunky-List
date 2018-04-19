@@ -15,7 +15,8 @@
      *  \remarks The design of the templated iterator was inspired by these
      *           two sources:
      *  www.drdobbs.com/the-standard-librarian-defining-iterato/184401331
-     *  www.sj-vs.net/c-implementing-const_iterator-and-non-const-iterator-without-code-duplication
+     *  www.sj-vs.net/c-implementing-const_iterator-
+     * and-non-const-iterator-without-code-duplication
      */
 #include <list>
 template <typename ELEMENT>
@@ -64,7 +65,8 @@ public:
     typename ChunkyList<ELEMENT>::iterator utilLast(iterator& i);
     typename ChunkyList<ELEMENT>::iterator util(iterator& i);
     typename ChunkyList<ELEMENT>::iterator copyNewUtilization(iterator& i);
-    typename ChunkyList<ELEMENT>::iterator deleteFromChunk(typename ChunkyList<ELEMENT>::iterator& i);
+    typename ChunkyList<ELEMENT>::iterator 
+             deleteFromChunk(typename ChunkyList<ELEMENT>::iterator& i);
    
 
 
@@ -77,9 +79,6 @@ private:
         static const size_t CHUNKSIZE = 12;
         size_t length_;
         ELEMENT elements_[CHUNKSIZE];
-        ////////////////////////////////////////////////////////////////////////////
-        //iterator itUt;
-        ////////////////////////////////////////////////////////////////////////////
     };
 
     size_t size_;
@@ -119,11 +118,6 @@ private:
         ///< Convert a non-const iterator to a const-iterator, if necessary
         Iterator(const Iterator<false>& i);  
 
-
-        //destructor: 
-        //~Iterator(); 
-
-
         //Iterator Operations
         Iterator& operator++();
         Iterator& operator--();
@@ -135,14 +129,7 @@ private:
         friend class ChunkyList<ELEMENT>;
         size_t arrayIndex_;
         chunk_iter_t it_;
-        ////////////////////////////////////////////////////////////////////////////
-        //void push_backUtilization(typename std::list<Chunk>::iterator itUt_);
-        ////////////////////////////////////////////////////////////////////////////
 
-        
-    // private data members used by iterator (up to you)
-
-    // A parameterized constructor based on the private data members you choose
     };
 };
 

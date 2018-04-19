@@ -131,7 +131,8 @@ void ChunkyList<ELEMENT>::push_back(ELEMENT e)
 
 //helper function that copies the second half to a new chunk 
 template <typename ELEMENT>
-typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::copyUtilization(typename ChunkyList<ELEMENT>::iterator& i)
+typename ChunkyList<ELEMENT>::iterator 
+ChunkyList<ELEMENT>::copyUtilization(typename ChunkyList<ELEMENT>::iterator& i)
 {
     //create a new chunk
     size_t iteratorPosition = i.arrayIndex_;
@@ -156,7 +157,8 @@ typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::copyUtilization(type
    
     //if our iterator wasn't in the first half, point it to wherever it is
     if (iteratorPosition >= ChunkyList<ELEMENT>::Chunk::CHUNKSIZE/2){ 
-        iterator passIt {(iteratorPosition - ChunkyList<ELEMENT>::Chunk::CHUNKSIZE/2),
+        iterator passIt {(iteratorPosition - 
+                ChunkyList<ELEMENT>::Chunk::CHUNKSIZE/2),
                          chunks_.insert(++i.it_,newChunk)};          
         return passIt;
         
@@ -171,7 +173,8 @@ typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::copyUtilization(type
 
 //helper function to add the element to the wanted space
 template <typename ELEMENT> 
-void ChunkyList<ELEMENT>::insertToChunk(typename ChunkyList<ELEMENT>::iterator i, ELEMENT c){
+void ChunkyList<ELEMENT>::insertToChunk(typename 
+        ChunkyList<ELEMENT>::iterator i, ELEMENT c){
     size_t insertLocation = i.arrayIndex_;
 
     //moves all the elements 1 forward to create space for the pushee
@@ -185,14 +188,18 @@ void ChunkyList<ELEMENT>::insertToChunk(typename ChunkyList<ELEMENT>::iterator i
 }
 
 template <typename ELEMENT> 
-typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::insert(ELEMENT c, iterator i)
+typename ChunkyList<ELEMENT>::iterator 
+         ChunkyList<ELEMENT>::insert(ELEMENT c, iterator i)
 {
-    //if we are inserting at the end of the list and it is not full, just push_back;
-    if(i.it_->length_ != ChunkyList<ELEMENT>::Chunk::CHUNKSIZE && i.arrayIndex_ == i.it_->length_ -1 ){
+    //if we are inserting at the end of the list and 
+    //it is not full, just push_back;
+    if(i.it_->length_ != ChunkyList<ELEMENT>::Chunk::CHUNKSIZE 
+                    && i.arrayIndex_ == i.it_->length_ -1 ){
         push_back(c);
         return i;
     }
-    //if we are adding to a full chunk, call copyUtilization and then insertToChunk.
+    //if we are adding to a full chunk, call copyUtilization 
+    //and then insertToChunk.
     else if(i.it_->length_ == ChunkyList<ELEMENT>::Chunk::CHUNKSIZE){   
         insertToChunk(copyUtilization(i),c);
         return i;
@@ -209,10 +216,12 @@ typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::insert(ELEMENT c, it
 //////////////////////////////////
 
 template <typename ELEMENT> 
-typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::erase(iterator i)
+typename ChunkyList<ELEMENT>::iterator 
+         ChunkyList<ELEMENT>::erase(iterator i)
 {
 
-    //if the chunkyList has less than 3 elements or chunk has enough elements just delete 
+    //if the chunkyList has less than 3 elements or 
+    //chunk has enough elements just delete 
     if(size_ <=3 || i.it_->length_ > 3){
         iterator return_ = deleteFromChunk(i);       
         return return_;
@@ -227,10 +236,12 @@ typename ChunkyList<ELEMENT>::iterator ChunkyList<ELEMENT>::erase(iterator i)
 //delete from chunk helper function
 template <typename ELEMENT>
 typename ChunkyList<ELEMENT>::iterator 
-ChunkyList<ELEMENT>::deleteFromChunk(typename ChunkyList<ELEMENT>::iterator& i){
+ChunkyList<ELEMENT>::deleteFromChunk(typename 
+                     ChunkyList<ELEMENT>::iterator& i){
     //create a variable for where you want to delete
     size_t deleteLocation = i.arrayIndex_;
-    for(size_t remover = deleteLocation; remover < i.it_->length_ ; ++remover){
+    for(size_t remover = deleteLocation; remover 
+                        < i.it_->length_ ; ++remover){
         i.it_->elements_[remover] = i.it_->elements_[remover + 1];
     }
     //update size
@@ -244,7 +255,8 @@ ChunkyList<ELEMENT>::deleteFromChunk(typename ChunkyList<ELEMENT>::iterator& i){
 //utilization helper function for erase
 template <typename ELEMENT>
 typename ChunkyList<ELEMENT>::iterator 
-ChunkyList<ELEMENT>::copyNewUtilization(typename ChunkyList<ELEMENT>::iterator& i)
+ChunkyList<ELEMENT>::copyNewUtilization(typename 
+                    ChunkyList<ELEMENT>::iterator& i)
 {   
     //if((*i.it))
     if ( i.it_ !=  --chunks_.end() ){
@@ -266,7 +278,8 @@ ChunkyList<ELEMENT>::utilLast(typename ChunkyList<ELEMENT>::iterator& i){
     if (previousChunk.it_->length_ > 9){
         //copy all the elements from the chunk that erased an element
         // over to the previous chunk
-        ELEMENT elementToCopy = previousChunk.it_->elements_[previousChunk.it_->length_-1];
+        ELEMENT elementToCopy = 
+                previousChunk.it_->elements_[previousChunk.it_->length_-1];
         //update the length of the previous chunk
         --previousChunk.it_->length_;
         ++(*i.it_).length_;
@@ -285,7 +298,8 @@ ChunkyList<ELEMENT>::utilLast(typename ChunkyList<ELEMENT>::iterator& i){
         //mover starts at 0 and goes up to the length_
         for (size_t mover = 0; mover < (*i.it_).length_; ++mover){
             //each time it will move an element to fill in the new empty spaces
-            previousChunk.it_->elements_[previousChunk.it_->length_] = (*i.it_).elements_[mover];
+            previousChunk.it_->elements_[previousChunk.it_->length_] =
+                                             (*i.it_).elements_[mover];
             //update length_
             ++previousChunk.it_->length_;       
         }
@@ -313,7 +327,8 @@ ChunkyList<ELEMENT>::util(typename ChunkyList<ELEMENT>::iterator& i){
         //create mover that starts at 0 and goes up to the length_
         for (size_t mover = 0; mover < nextChunk.it_->length_; ++mover){
             //each time move an element to its new correct location
-            (*i.it_).elements_[mover] = nextChunk.it_->elements_[mover+1];       
+            (*i.it_).elements_[mover] =
+                                     nextChunk.it_->elements_[mover+1];       
         }
         --nextChunk.it_->length_;
         return i;
@@ -324,9 +339,11 @@ ChunkyList<ELEMENT>::util(typename ChunkyList<ELEMENT>::iterator& i){
         //create mover that starts at the length_ - 1 and goes up to 0
         for (size_t  mover = nextChunk.it_->length_-1; mover >= 0; --mover){
             //each time move an element to its new correct location
-            nextChunk.it_->elements_[mover+toMove] = nextChunk.it_->elements_[mover];
+            nextChunk.it_->elements_[mover+toMove] =
+                                             nextChunk.it_->elements_[mover];
         } 
-        //increase the length of the adjacent chunk and then delete the previous chunk
+        //increase the length of the adjacent chunk and 
+        //then delete the previous chunk
         nextChunk.it_->length_ = nextChunk.it_->length_ + toMove;
         //delete the now empty chunk
         chunks_.erase(i.it_);
@@ -335,16 +352,19 @@ ChunkyList<ELEMENT>::util(typename ChunkyList<ELEMENT>::iterator& i){
  }
 
 template <typename ELEMENT> 
-ChunkyList<ELEMENT>& ChunkyList<ELEMENT>::operator+=(const ChunkyList<ELEMENT>& rhs)
+ChunkyList<ELEMENT>& 
+ChunkyList<ELEMENT>::operator+=(const ChunkyList<ELEMENT>& rhs)
 {
     if(*this != rhs){
-        for(const_iterator rhsIt = rhs.begin(); rhsIt != rhs.end(); ++rhsIt){
+        for(const_iterator rhsIt = rhs.begin();    
+            rhsIt != rhs.end(); ++rhsIt){
             push_back(*rhsIt);
         }
     }
     else{
         ChunkyList<ELEMENT> copied = ChunkyList<ELEMENT>(*this);
-        for(const_iterator rhsIt = copied.begin(); rhsIt != copied.end(); ++rhsIt){
+        for(const_iterator rhsIt = copied.begin(); 
+            rhsIt != copied.end(); ++rhsIt){
             push_back(*rhsIt);
         }    
     }
@@ -369,7 +389,8 @@ double ChunkyList<ELEMENT>::utilization() const{
 
 template <typename ELEMENT> 
 template<bool is_const> 
-ChunkyList<ELEMENT>::Iterator<is_const>::Iterator(size_t arrayIndex, chunk_iter_t it):
+ChunkyList<ELEMENT>::Iterator<is_const>::Iterator(size_t arrayIndex,
+                                         chunk_iter_t it):
     arrayIndex_{arrayIndex},
     it_{it}
 {
@@ -387,7 +408,8 @@ ChunkyList<ELEMENT>::Iterator<is_const>::Iterator(const Iterator<false>& i):
 
 template <typename ELEMENT> 
 template <bool is_const>
-ChunkyList<ELEMENT>::Iterator<is_const>& ChunkyList<ELEMENT>::Iterator<is_const>::operator++()
+ChunkyList<ELEMENT>::Iterator<is_const>& 
+ChunkyList<ELEMENT>::Iterator<is_const>::operator++()
 {
 
     ++arrayIndex_;
@@ -401,7 +423,8 @@ ChunkyList<ELEMENT>::Iterator<is_const>& ChunkyList<ELEMENT>::Iterator<is_const>
 
 template <typename ELEMENT> 
 template<bool is_const>
-ChunkyList<ELEMENT>::Iterator<is_const>& ChunkyList<ELEMENT>::Iterator<is_const>::operator--()
+ChunkyList<ELEMENT>::Iterator<is_const>&
+ChunkyList<ELEMENT>::Iterator<is_const>::operator--()
 {
     if(arrayIndex_ != 0){
         --arrayIndex_;
@@ -426,7 +449,8 @@ typename ChunkyList<ELEMENT>::template Iterator<is_const>::reference
 
 template <typename ELEMENT> 
 template<bool is_const>
-bool ChunkyList<ELEMENT>::Iterator<is_const>::operator==(const Iterator& rhs) const
+bool ChunkyList<ELEMENT>::Iterator<is_const>::operator==(const 
+                                          Iterator& rhs) const
 {
     if (this->it_ == rhs.it_){
         if (this->arrayIndex_ == rhs.arrayIndex_){
@@ -443,7 +467,8 @@ bool ChunkyList<ELEMENT>::Iterator<is_const>::operator==(const Iterator& rhs) co
 
 template <typename ELEMENT> 
 template<bool is_const>
-bool ChunkyList<ELEMENT>::Iterator<is_const>::operator!=(const Iterator& rhs) const
+bool ChunkyList<ELEMENT>::Iterator<is_const>::operator!=(const
+                                          Iterator& rhs) const
 {
    return !(*this == (rhs));
 }
